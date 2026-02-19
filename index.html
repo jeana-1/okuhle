@@ -5,25 +5,154 @@
     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    
     <title>Birthday Celebration</title>\n   
     <style>\n        
+
+      * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+      body {          
+           font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d0000 100%);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;       
+           }
       
-      body {\n            
-            background-color: #000;\n            
-            color: #fff;\n            
-            font-family: Arial, sans-serif;\n            
-            overflow: hidden;\n        
-           }\n        
-            
-      #cake {\n            
+      .lock-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d0000 100%);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            z-index: 9999;
+            text-align: center;
+        }
+      
+      .lock-screen.active {
+            display: flex;
+        }
+
+        .lock-screen h1 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+
+        .lock-screen p {
+            font-size: 1.2em;
+            margin-bottom: 30px;
+            color: #ff6b9d;
+        }
+    
+      .countdown-lock {
+            font-size: 1.5em;
+            color: #ff0000;
+            font-weight: bold;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+      .container {
+            max-width: 900px;
+            width: 90%;
+            background: rgba(255, 0, 0, 0.1);
+            border: 3px solid #ff0000;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.3);
+            animation: slideIn 0.8s ease-out;
+        }
+
+      @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 3em;
+            color: #ff0000;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            animation: bounce 1s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+       .subtitle {
+            position: fixed;
+            font-size: 2em;
+            pointer-events: none;
+            animation: float-up 3s ease-out forwards;
+        }
+
+        @keyframes float-up {
+            0% {
+                opacity: 1;
+                transform: translateY(0) rotate(0deg);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-100px) rotate(360deg);
+            }
+        }
+
+        .hearts-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .heart {
+            position: absolute;
+            font-size: 2em;
+            animation: float 6s infinite;
+            opacity: 0.3;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) translateX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.5;
+            }
+            90% {
+                opacity: 0.5;
+            }
+            100% {
+                transform: translateY(-100vh) translateX(100px);
+                opacity: 0;
+            }
+        }
+       #cake {            
              /* Add styles for the 3D blowable cake */\n        
-            }\n
-      
-      #countdown {\n            
-                  /* Countdown timer styles */\n        
-                 }\n    
-      
-      .lock-screen {\n            
-                    /* Lock screen styles */\n        
-                   }\n     
+            }
       
       .love-notes {\n            
                    /* Love notes styles */\n       
@@ -44,42 +173,259 @@
       /* Additional animations and styles */\n    
     </style>\n
   </head>\n
-  
-  <body>\n    
+
+  <body>
+    <div class="hearts-background" id="hearts"></div>
+
+    < div class="lock-screen" id="lockScreen">
+        <h1>🎂 Coming Soon... 🎂</h1>
+        <p>Pooks, this birthday surprise unlocks at midnight!</p>
+        <div class="countdown-lock">
+            <div id="countdownLock"></div>
+        </div>
+    </div> 
+
+    <div class="container" id="mainContent" style="display: none;">
+        <h1>🎉 HAPPY 20TH BIRTHDAY POOKS! 🎉</h1>
+        <p class="subtitle">Welcome to your special birthday surprise, you old UNC! 😂❤️</p>
+
+        <div class="countdown" id="countdown">
+            <div class="time-unit">
+                <h2 id="days">0</h2>
+                <p>Days</p>
+            </div>
+            <div class="time-unit">
+                <h2 id="hours">0</h2>
+                <p>Hours</p>
+            </div>
+            <div class="time-unit">
+                <h2 id="minutes">0</h2>
+                <p>Minutes</p>
+            </div>
+            <div class="time-unit">
+                <h2 id="seconds">0</h2>
+                <p>Seconds</p>
+            </div>
+        </div>
+
+        <div class="tab-buttons">
+            <button class="tab-btn active" onclick="showTab('notes')">💌 Love Notes</button>
+            <button class="tab-btn" onclick="showTab('quiz')">🎮 Quiz</button>
+            <button class="tab-btn" onclick="showTab('music')">🎵 Music</button>
+        </div>
+      <!-- Love Notes Tab -->
+        <div id="notes" class="tab-content active">
+            <div class="love-notes">
+                <div class="note">
+                    <h3>💕 Note 1</h3>
+                    <p>Dear Pooks, Happy 20th birthday to my favorite person! You've turned into such an UNC but you'll always be my baby. I love you so much and I'm so grateful for every moment with you. Here's to 20 more years of laughs, love, and memories together! 🥰</p>
+                </div>
+                <div class="note">
+                    <h3>❤️ Note 2</h3>
+                    <p>You know what I love most about you? Everything. Your laugh, your kindness, the way you make me feel like I'm the only person in the world. Happy birthday, my love! Let's make this year unforgettable together! 🌹</p>
+                </div>
+                <div class="note">
+                    <h3>🌹 Note 3</h3>
+                    <p>Welcome to your 20s, UNC! You're officially old but you'll forever be young at heart (and in my eyes). Thank you for being the most amazing boyfriend. I can't wait to celebrate this special day with you! 🎂✨</p>
+                </div>
+                <div class="note">
+                    <h3>💖 Note 4</h3>
+                    <p>This is just the beginning of something beautiful. I see our future together and I'm so excited. Happy birthday to the love of my life! You deserve all the happiness in the world. I love you, Pooks! 🥺💕</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quiz Tab -->
+        <div id="quiz" class="tab-content">
+            <div class="quiz-container">
+                <h2 style="color: #ff0000; margin-bottom: 20px;">How Well Do You Know Pooks? 🧠</h2>
+                
+                <div class="question">
+                    <h3>What's my favorite thing about you?</h3>
+                    <div class="options">
+                        <label class="option">
+                            <input type="radio" name="q1" value="Your smile"> Your smile
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q1" value="Your personality"> Your personality
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q1" value="Everything about you"> Everything about you
+                        </label>
+                    </div>
+                </div>
+
+                <div class="question">
+                    <h3>When did I first know I loved you?</h3>
+                    <div class="options">
+                        <label class="option">
+                            <input type="radio" name="q2" value="Right away"> Right away
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q2" value="After getting to know you"> After getting to know you
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q2" value="It grew over time"> It grew over time
+                        </label>
+                    </div>
+                </div>
+
+                <div class="question">
+                    <h3>What's our song?</h3>
+                    <div class="options">
+                        <label class="option">
+                            <input type="radio" name="q3" value="Option A"> Option A
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q3" value="Option B"> Option B
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q3" value="Option C"> Option C
+                        </label>
+                    </div>
+                </div>
+
+                <button class="submit-btn" onclick="submitQuiz()">Submit Your Answers 🎉</button>
+
+                <div class="results" id="results">
+                    <h3 style="color: #ff0000; margin-bottom: 15px;">You got it right! 🎊</h3>
+                    <p>Of course you did, because you know how much I love you! This is just the beginning of your birthday surprise! 💕</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Music Tab -->
+        <div id="music" class="tab-content">
+            <div class="music-player">
+                <h2 style="color: #ff0000; margin-bottom: 20px;">🎵 Our Song 🎵</h2>
+                <p style="margin-bottom: 20px;">Here's a song to celebrate you, Pooks!</p>
+                <audio controls>
+                  <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+                <p style="margin-top: 20px; color: #ff6b9d;">💕 Add your favorite song URL above! 💕</p>
+            </div>
+        </div>
+    </div>
+
+ <script>
+        const targetDate = new Date('2026-02-22T00:00:00').getTime();
+        const lockScreen = document.getElementById('lockScreen');
+        const mainContent = document.getElementById('mainContent');
+
+        function checkAccess() {
+            const now = new Date().getTime();
+            const timeLeft = targetDate - now;
+
+            if (timeLeft <= 0) {
+                lockScreen.classList.remove('active');
+                mainContent.style.display = 'block';
+                updateCountdown();
+                createHearts();
+            } else {
+                lockScreen.classList.add('active');
+                updateCountdownLock(timeLeft);
+            }
+        }
+      
+
+        function updateCountdownLock(timeLeft) {
+            const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+
+            document.getElementById('countdownLock').innerHTML = 
+                `${days}d ${hours}h ${minutes}m ${seconds}s`;
+
+            setTimeout(() => updateCountdownLock(targetDate - new Date().getTime()), 1000);
+        }
+
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const timeLeft = targetDate - now;
+
+            if (timeLeft <= 0) {
+                document.getElementById('days').textContent = '0';
+                document.getElementById('hours').textContent = '0';
+                document.getElementById('minutes').textContent = '0';
+                document.getElementById('seconds').textContent = '0';
+                return;
+            }
+          const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+
+            document.getElementById('days').textContent = days;
+            document.getElementById('hours').textContent = hours;
+            document.getElementById('minutes').textContent = minutes;
+            document.getElementById('seconds').textContent = seconds;
+
+            setTimeout(updateCountdown, 1000);
+        }
+
+        function showTab(tabName) {
+            const tabs = document.querySelectorAll('.tab-content');
+            const buttons = document.querySelectorAll('.tab-btn');
+
+            tabs.forEach(tab => tab.classList.remove('active'));
+            buttons.forEach(btn => btn.classList.remove('active'));
+
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+
+            triggerConfetti();
+          }
+
+        function submitQuiz() {
+            const results = document.getElementById('results');
+            results.classList.add('show');
+            triggerConfetti();
+        }
+
+        function triggerConfetti() {
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = `confetti ${Math.random() > 0.5 ? 'black' : ''}`;
+                confetti.style.left = Math.random() * window.innerWidth + 'px';
+                confetti.style.top = '0';
+                confetti.style.animation = `fall ${2 + Math.random() * 1}s ease-in forwards`;
+                document.body.appendChild(confetti);
+
+                setTimeout(() => confetti.remove(), 3000);
+            }
+        }
+    function createHearts() {
+            const heartsContainer = document.getElementById('hearts');
+            for (let i = 0; i < 10; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'heart';
+                heart.textContent = '❤️';
+                heart.style.left = Math.random() * 100 + '%';
+                heart.style.animationDelay = Math.random() * 6 + 's';
+                heart.style.animationDuration = (6 + Math.random() * 3) + 's';
+                heartsContainer.appendChild(heart);
+            }
+        }
+
+        // Add CSS for falling confetti
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fall {
+                to {
+                    transform: translateY(100vh) rotate(360deg);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Check access on load and periodically
+        checkAccess();
+        setInterval(checkAccess, 1000);
+    </script>
     
-    <div id=\"cake\">
-    </div>\n   
-    
-    <div id=\"countdown\">
-    </div>\n    
-    
-    <div class=\"lock-screen\">
-    </div>\n    
-    
-    <div class=\"love-notes\">
-    </div>\n    
-    
-    <div class=\"quiz\">
-    </div>\n    
-    
-    <div class=\"music-player\">
-    </div>\n    
-    
-    <script>\n        // Countdown timer and other functionalities\n        
-      const countdownDate = new Date(2026, 1, 21, 0, 0, 0).getTime();\n        
-        const countdownFunction = setInterval(() => {\n            
-          const now = new Date().getTime();\n            
-            const distance = countdownDate - now;\n            
-              const days = Math.floor(distance / (1000 * 60 * 60 * 24));\n            
-                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));\n            
-                  const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));\n            
-                    const seconds = Math.floor((distance % (1000 * 60)) / 1000);\n            
-                      document.getElementById(\"countdown\").innerHTML = days + \"d " + hours + \"h " + minutes + \"m " + seconds + \"s ";\n            
-                        if (distance < 0) {\n                
-                          clearInterval(countdownFunction);\n                
-                            document.getElementById(\"countdown\").innerHTML = \"Happy Birthday!\";\n            }\n        }, 1000);\n    
-                                                    
-    </script>\n
-    
-  </body>\n
+  </body>
+</html>
 </html>\n
